@@ -1,20 +1,42 @@
 import React, { useState } from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
-import { deleteShoppingCart, removeFromDb } from '../../utilities/fakedb';
+import { deleteShoppingCart, getStoredCart, removeFromDb } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
 import ReviewItem from '../ReviewItem/ReviewItem';
 
 const Orders = () => {
-    const { initialCart } = useLoaderData();  // { products: products, initialCart: initialCart }
-    const [cart, setCart] = useState(initialCart)
+    const { products } = useLoaderData();  // { products: products, initialCart: initialCart }
+
+    const initialCart = [];
+    const [cart, setCart] = useState(initialCart);
+    console.log(cart)
+
+    // get cart
+    const savedCart = getStoredCart();
+
+    for (const id in savedCart) {
+        const addedProduct = products.find(product => product._id === id);
+
+        if (addedProduct) {
+            const quantity = savedCart[id];
+            addedProduct.quantity = quantity;
+            initialCart.push(addedProduct);
+
+        }
+    }
+
+
+
+    //-------------------------
+
 
     const handleRemoveItem = (id) => {
-        const remaining = cart.filter(product => product.id !== id);
+        const remaining = cart.filter(product => product._id !== id);
         setCart(remaining);
         removeFromDb(id);
     }
 
-    const clearCart = () =>{
+    const clearCart = () => {
         setCart([]);
         deleteShoppingCart();
     }
@@ -24,7 +46,7 @@ const Orders = () => {
             <div className='orders-container'>
                 {
                     cart.map(product => <ReviewItem
-                        key={product.id}
+                        key={product._id}
                         product={product}
                         handleRemoveItem={handleRemoveItem}
                     ></ReviewItem>)

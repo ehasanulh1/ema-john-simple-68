@@ -5,7 +5,6 @@ import Main from './layouts/Main';
 import Shop from './components/Shop/Shop';
 import Orders from './components/Orders/Orders';
 import Inventory from './components/Inventory/Inventory';
-import { productsAndCartLoader } from './loaders/productsAndCartLoader';
 import Login from './components/Login/Login';
 import SignUp from './components/SignUp/SignUp';
 import Shipping from './components/Shipping/Shipping';
@@ -20,12 +19,11 @@ function App() {
       children: [
         {
           path: '/',
-          loader: () => fetch('http://localhost:5000/products'),
           element: <Shop></Shop>
         },
         {
           path: 'orders',
-          loader: productsAndCartLoader,
+          loader: () => fetch('http://localhost:5000/products'),
           element: <Orders></Orders>
         },
         {
